@@ -1,0 +1,74 @@
+function createOffer() {
+    pc.createOffer(function(desc) {
+      console.log('createOffer', desc);
+      pc.setLocalDescription(desc, function () {
+        console.log('setLocalDescription', pc.localDescription);
+        socket.emit('exchange', {'to': socketId, 'sdp': pc.localDescription });
+      }, logError);
+    }, logError);
+  }
+
+function createOffer() {
+    pc.createOffer().then(function(desc){
+        pc.setLocalDescription(desc).then(function(){
+            console.log('setLocalDescription', pc.localDescription);
+            socket.emit('exchange', {'to': socketId, 'sdp': pc.localDescription });
+        }).catch(function(err){
+            console.log(err);
+        })
+    }).catch(function(err){
+        console.log(err);
+    })
+}
+
+
+  if (data.sdp) {
+    console.log('exchange sdp', data);
+    pc.setRemoteDescription(new RTCSessionDescription(data.sdp), function () {
+      if (pc.remoteDescription.type == "offer")
+        pc.createAnswer(function(desc) {
+          console.log('createAnswer', desc);
+          pc.setLocalDescription(desc, function () {
+            console.log('setLocalDescription', pc.localDescription);
+            socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
+          }, logError);
+        }, logError);
+    }, logError);
+  } else {
+    console.log('exchange candidate', data);
+if(data.candidate){
+pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+}    
+
+  }
+
+
+if (data.sdp){
+  console.log('exchange sdp', data)
+  pc.setRemoteDescription(new RTCSessionDescription(data.sdp)).then(function (){
+    if (pc.remoteDescription.type == "offer")
+    pc.createAnswer().then(function(desc) {
+      console.log('createAnswer', desc);
+        pc.setLocalDescription(desc).then(function (){
+          console.log('setLocalDescription', pc.localDescription);
+            socket.emit('exchange', {'to': fromId, 'sdp': pc.localDescription });
+        }).catch(function(err){
+            console.log(err);
+        })
+    }).catch(function(err){
+            console.log(err);
+        })
+  }).catch(function(err){
+            console.log(err);
+        })
+} else {
+  console.log('exchange candidate', data);
+if(data.candidate){
+pc.addIceCandidate().then(new RTCIceCandidate(data.candidate){
+
+})catch(function(err){
+  console.log(err);
+}
+}
+}
+
